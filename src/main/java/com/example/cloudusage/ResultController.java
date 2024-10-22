@@ -1,6 +1,7 @@
 package com.example.cloudusage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,8 @@ public class ResultController {
         this.usageService = usageService;
     }
 
-    @PostMapping("/v1/result")
+    //@PostMapping("/v1/result")
+    @GetMapping("/v1/result")
     public Map<String, Object> calculateAndSendResult(@RequestBody Map<String, Object> request) {
         List<Map<String, Object>> events = (List<Map<String, Object>>) request.get("events");
         Map<String, Long> usageMap = usageService.calculateTotalUsage(events);
