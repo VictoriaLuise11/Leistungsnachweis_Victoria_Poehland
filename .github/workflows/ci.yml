@@ -1,32 +1,24 @@
-name: CI Pipeline
+name: HTTP Status Check
+
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  build:
+  check_http_status:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Build with Gradle
-        run: ./gradlew build
-
-      - name: Build Docker image
-        run: docker build -t cloudusage-app .
-
-      - name: Run tests
-        run: docker run --rm cloudusage-app
+      - name: Check URL Status
+        run: |
+          response=$(curl -o /dev/null -s -w "%{http_code}\n" https://httpstat.us/500)
+          echo "HTTP Status Code: $response"
+          if [ "$response" -ne 200 ]; then
+            echo "Unexpected HTTP status code. Expected 200."
+            exit 1
+          fi
+          echo "The website returned the expected 200 status code."
